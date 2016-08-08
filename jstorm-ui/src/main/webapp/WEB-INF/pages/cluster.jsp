@@ -142,6 +142,7 @@
     <!------------------------- topology summary --------------------->
     <!-- ========================================================== -->
     <h2>Topology Summary</h2>
+    <a href="toTasks?name=${clusterName}" class="btn btn-sm btn-primary">Jar List</a>
     <table class="table table-bordered table-hover table-striped sortable center"
            data-table="${topologies.size() > PAGE_MAX ? "full" : "sort"}">
         <thead>
@@ -149,6 +150,7 @@
             <th>Topology Name</th>
             <th>Topology Id</th>
             <th>Status</th>
+            <th>Behavior</th>
             <th>Uptime</th>
             <th>Num workers</th>
             <th>Num tasks</th>
@@ -162,6 +164,8 @@
                 <td><a href="topology?id=${topo.id}&cluster=${clusterName}">${topo.name}</a></td>
                 <td>${topo.id}</td>
                 <td><ct:status status="${topo.status}"/></td>
+                <th><a href="behavior?name=${clusterName}&topoName=${topo.name}&topoStatus=${topo.status}&behavior=${topo.behavior}" 
+                	class="btn btn-warning btn-xs" >${topo.behavior}</a></th>
                 <td>${topo.uptime}</td>
                 <td>${topo.workersTotal}</td>
                 <td>${topo.tasksTotal}</td>

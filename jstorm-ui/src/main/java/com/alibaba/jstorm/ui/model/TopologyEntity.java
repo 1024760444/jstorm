@@ -26,6 +26,11 @@ public class TopologyEntity {
     private String id;
     private String name;
     private String status;
+    
+    /**
+     * behavior of the task: deactivate or kill
+     */
+    private String behavior;
     private String uptime;
     private int uptimeSeconds;
     private int tasksTotal;
@@ -42,6 +47,14 @@ public class TopologyEntity {
         this.tasksTotal = tasksTotal;
         this.workersTotal = workersTotal;
         this.errorInfo = errorInfo;
+        this.behavior = "deactivate";
+        if("ACTIVE".equalsIgnoreCase(status)) {
+        	this.behavior = "deactivate";
+        } else if ("INACTIVE".equalsIgnoreCase(status)) {
+        	this.behavior = "kill";
+        } else {
+        	this.behavior = "kill";
+        }
     }
 
     public String getId() {
@@ -107,4 +120,12 @@ public class TopologyEntity {
     public void setErrorInfo(String errorInfo) {
         this.errorInfo = errorInfo;
     }
+
+	public String getBehavior() {
+		return behavior;
+	}
+
+	public void setBehavior(String behavior) {
+		this.behavior = behavior;
+	}
 }

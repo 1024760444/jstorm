@@ -32,8 +32,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.jstorm.ui.utils.NimbusClientManager;
+import com.alibaba.jstorm.ui.utils.ScriptUtil;
 import com.alibaba.jstorm.ui.utils.UIUtils;
 import com.alibaba.jstorm.utils.JStormUtils;
 
@@ -46,6 +48,18 @@ import backtype.storm.utils.NimbusClient;
 public class ClusterController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClusterController.class);
+    
+    @RequestMapping(value = "/behavior", method = RequestMethod.GET)
+    public ModelAndView behavior(@RequestParam(value = "name", required = true) String name,
+            ModelMap model, String topoName, String topoStatus, String behavior) {
+    	/**
+    	 * 
+    	 */
+		if (topoName != null && !"".equals(topoName)) {
+			ScriptUtil.run(behavior, topoName);
+		}
+    	return new ModelAndView("redirect:/cluster?name="+name);
+    }
 
     @RequestMapping(value = "/cluster", method = RequestMethod.GET)
     public String show(@RequestParam(value = "name", required = true) String name,
