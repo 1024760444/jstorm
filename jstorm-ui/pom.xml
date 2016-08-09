@@ -68,6 +68,13 @@
             <version>2.5.1</version>
         </dependency>
 
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
         <!-- exclude log4j-slf4j12 since we bridge slf4j to logback -->
         <dependency>
             <groupId>org.slf4j</groupId>

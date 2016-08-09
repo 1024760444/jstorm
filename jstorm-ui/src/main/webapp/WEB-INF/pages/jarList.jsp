@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="ct" uri="http://jstorm.alibaba.com/jsp/tags" %>
@@ -30,54 +32,141 @@
     <!------------------------- topology summary --------------------->
     <!-- ========================================================== -->
     <h2>Task Jars Summary</h2>
-    <a href="#" class="btn btn-sm btn-primary">Add Jar</a>
+    <button id="btn_add" class="btn btn-sm btn-primary"  style="margin-bottom: 3px;" >Add</button>
     <table class="table table-bordered table-hover table-striped sortable center" >
         <thead>
         <tr>
-            <th>Task Name</th>
-            <th>Path</th>
             <th>Jar Name</th>
-            <th>Main Class</th>
-            <th>Main Args</th>
-            <th>Upload Time</th>
+            <th>Full Path</th>
+            <th>Args</th>
             <th>Behavior</th>
         </tr>
         </thead>
         <tbody>
+        <c:forEach var="jarInfo" items="${jarFileArray}" varStatus="index">
             <tr>
-                <td>apmhub1.3</td>
-                <td>${path}</td>
-                <td>original-apmhub1.3.jar</td>
-                <td>apm.shield.hub.bin.ApmTopologyCluster</td>
-                <td>${name}</td>
-                <td>2016-08-08 17:49:45</td>
-                <td><a href="#" class="btn btn-primary btn-xs" >submit</a></td>
+                <td>${jarInfo.jarName}</td>
+                <td>${jarInfo.fullPath}</td>
+                <td>${jarInfo.args}</td>
+                <td><button id="submit_topo" class="btn btn-primary btn-xs" >Submit</button></td>
             </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>
 
-<jsp:include page="layout/_footer.jsp"/>
+	<div class="modal fade" id="submitTopology" tabindex="-1" role="dialog"
+		aria-labelledby="submitTopologyLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Submit Topology</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" action="submitTopology?name=${clusterName}" method="post" >
+						<div class="form-group">
+							<label for="name">Jar Name : </label> <input type="text"
+								class="form-control" readonly="readonly" id="submitTopoJar" name="submitTopoJar" placeholder="Jar Name">
+						</div>
+						<div class="form-group">
+							<label for="name">Full Path : </label> <input type="text"
+								class="form-control" readonly="readonly" id="submitTopoPath" name="submitTopoPath" placeholder="Main Class">
+						</div>
+						<div class="form-group">
+							<label for="name">Args : </label> <input type="text"
+								class="form-control" id="submitTopoArgs" name="submitTopoArgs" placeholder="Main Args">
+						</div>
+						<button type="submit" class="btn btn-default"> Submit </button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="submitJarFile" tabindex="-1" role="dialog"
+		aria-labelledby="submitJarFileLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">New</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" action="uploadJar?name=${clusterName}" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="name">Jar Name : </label> <input type="text"
+								class="form-control" id="jarName" name="jarName" placeholder="Jar Name">
+						</div>
+						<div class="form-group">
+							<label for="name">Main Class : </label> <input type="text"
+								class="form-control" id="mainClass" name="mainClass" placeholder="Main Class">
+						</div>
+						<div class="form-group">
+							<label for="name">Main Args : </label> <input type="text"
+								class="form-control" id="mainArgs" name="mainArgs" placeholder="Main Args">
+						</div>
+						<div class="form-group">
+							<label for="inputfile">Input Jar File</label> <input type="file"
+								id="inputfile"  name="inputfile">
+							<p class="help-block">Jstrom Jar File Local Path</p>
+						</div>
+						<button type="submit" class="btn btn-default"> Add </button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<jsp:include page="layout/_footer.jsp"/>
 <script src="assets/js/echarts/echarts.js"></script>
 <script src="assets/js/storm.js"></script>
 <script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
+	$("#btn_add").click(function() {
+		$("#submitJarFileLabel").text("Add");
+		$('#submitJarFile').modal();
+	});
+	
+	$("#submit_topo").click(function() {
+		
+		var tr = $(this).parent().parent();
+		var td0 = tr.children("td:eq(0)");
+		var td1 = tr.children("td:eq(1)");
+		var td2 = tr.children("td:eq(2)");
+		
+		$("#submitTopoJar").val(td0.text());
+		$("#submitTopoPath").val(td1.text());
+		$("#submitTopoArgs").val(td2.text());
+		
+		$("#submitTopologyLabel").text("Submit");
+		$('#submitTopology').modal();
+	});
+	
+	$(function() {
+		$('[data-toggle="tooltip"]').tooltip();
 
-        //draw metrics charts
-        $.getJSON("api/v2/cluster/${clusterName}/metrics", function (data) {
-            var echarts = new EChart();
-            data = data['metrics'];
-            var width = ($('.container-fluid').width() / data.length) - 2;
-            data.forEach(function (e) {
-                var selector = document.getElementById('chart-' + e.name);
-                selector.setAttribute("style", "width:"+ width + "; height: 100px");
-                echarts.init(selector, e);
-            });
+		//draw metrics charts
+		$.getJSON("api/v2/cluster/${clusterName}/metrics", function(data) {
+			var echarts = new EChart();
+			data = data['metrics'];
+			var width = ($('.container-fluid').width() / data.length) - 2;
+			data.forEach(function(e) {
+				var selector = document.getElementById('chart-' + e.name);
+				selector.setAttribute("style", "width:" + width
+						+ "; height: 100px");
+				echarts.init(selector, e);
+			});
 
-            $("#chart-tr").toggleClass("hidden");
-        });
-    });
+			$("#chart-tr").toggleClass("hidden");
+		});
+	});
 </script>
 </body>
 </html>

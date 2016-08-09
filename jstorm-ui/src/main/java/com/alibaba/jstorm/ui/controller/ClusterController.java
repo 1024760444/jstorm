@@ -18,7 +18,6 @@
 package com.alibaba.jstorm.ui.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import backtype.storm.generated.*;
 import com.alibaba.jstorm.metric.*;
@@ -37,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.jstorm.ui.utils.NimbusClientManager;
 import com.alibaba.jstorm.ui.utils.ScriptUtil;
 import com.alibaba.jstorm.ui.utils.UIUtils;
-import com.alibaba.jstorm.utils.JStormUtils;
 
 import backtype.storm.utils.NimbusClient;
 

@@ -142,7 +142,7 @@
     <!------------------------- topology summary --------------------->
     <!-- ========================================================== -->
     <h2>Topology Summary</h2>
-    <a href="toTasks?name=${clusterName}" class="btn btn-sm btn-primary">Jar List</a>
+    <a href="toTasks?name=${clusterName}" class="btn btn-sm btn-primary">Add Topology</a>
     <table class="table table-bordered table-hover table-striped sortable center"
            data-table="${topologies.size() > PAGE_MAX ? "full" : "sort"}">
         <thead>
