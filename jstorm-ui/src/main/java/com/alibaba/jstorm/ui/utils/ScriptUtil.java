@@ -144,4 +144,28 @@ public class ScriptUtil {
 		}
 		return propert;
 	}
+	
+	/**
+	 * split the string with "/", and get the Last string.
+	 * @param jarName
+	 * @return
+	 */
+	public static String splitName(String jarName) {
+		String[] nameList = jarName.split("\\/");
+		
+		String pkgName = null;
+		if(nameList != null && nameList.length > 0) {
+			pkgName = nameList[nameList.length - 1];
+		}
+		return pkgName;
+	}
+	
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		String jarName = "/home/jstorm/apps/APM/apm1.3/bin/original-apmhub011.3.jar";
+		System.out.println(splitName(jarName));
+	}
 }

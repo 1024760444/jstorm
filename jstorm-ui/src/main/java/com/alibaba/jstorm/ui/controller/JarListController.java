@@ -90,46 +90,76 @@ public class JarListController {
 		String mainArgs = request.getParameter("mainArgs");
 		String keyword = request.getParameter("keyword");
 		
-		String argsString = mainClass + " " + mainArgs;
-		
-		// mkdir path 
-		File targetFolder = new File(properties.getPath());
-		File argsFolder = new File(properties.getPath() + "/args");
-		File keysFolder = new File(properties.getPath() + "/keys");
-		if(!targetFolder.exists()) {
-			targetFolder.mkdirs();
-		}
-		
-		// 
-		if(!argsFolder.exists()) {
-			argsFolder.mkdirs();
-		}
-		
-		//
-		if (!keysFolder.exists()) {
-			keysFolder.mkdirs();
-		}
-		
-		/**
-		 * args to the file.
-		 */
-		File argsFile = new File(properties.getPath() + "/args/" + jarName + ".txt");
-		StringFileUtil.writeTo(argsString, argsFile);
-		
-		/**
-		 * args to the file.
-		 */
-		File keysFile = new File(properties.getPath() + "/keys/" + jarName + ".txt");
-		StringFileUtil.writeTo(keyword, keysFile);
-		
-		/**
-		 * save data 
-		 */
-		try {
-			File jarFile = new File(properties.getPath() + "/" + jarName + ".jar");
-			inputfile.transferTo(jarFile);
-		} catch (Exception e) {
-			e.printStackTrace();
+		// jarName and mainClass is required.
+		if(jarName != null && !"".equals(jarName) 
+				&& mainClass != null && !"".equals(mainClass)) {
+			
+			// if the uploaded jar file is not empty.
+			if(inputfile != null && !inputfile.isEmpty() && inputfile.getSize() > 0) {
+				String argsString = mainClass + " " + mainArgs;
+				
+				// mkdir path 
+				File targetFolder = new File(properties.getPath());
+				File argsFolder = new File(properties.getPath() + "/args");
+				File keysFolder = new File(properties.getPath() + "/keys");
+				if(!targetFolder.exists()) {
+					targetFolder.mkdirs();
+				}
+				
+				// 
+				if(!argsFolder.exists()) {
+					argsFolder.mkdirs();
+				}
+				
+				//
+				if (!keysFolder.exists()) {
+					keysFolder.mkdirs();
+				}
+				
+				/**
+				 * args to the file.
+				 */
+				File argsFile = new File(properties.getPath() + "/args/" + jarName + ".txt");
+				StringFileUtil.writeTo(argsString, argsFile);
+				
+				/**
+				 * args to the file.
+				 */
+				File keysFile = new File(properties.getPath() + "/keys/" + jarName + ".txt");
+				StringFileUtil.writeTo(keyword, keysFile);
+				
+				/**
+				 * save data 
+				 */
+				try {
+					File jarFile = new File(properties.getPath() + "/" + jarName + ".jar");
+					inputfile.transferTo(jarFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} 
+			/**
+			 * if the jar file is empty, jarName is the jar full path name. 
+			 * e.g. /home/jstorm/apps/APM/apm1.3/bin/original-apmhub011.3.jar
+			 */
+			else {
+				File jarFile = new File(jarName);
+				if(jarFile.exists() && jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+					String submitTopoJar = ScriptUtil.splitName(jarName);
+					
+					File extFolder = new File(properties.getPath() + "/ext");
+					if(!extFolder.exists()) {
+						extFolder.mkdirs();
+					}
+					
+					/**
+					 * args to the file.
+					 */
+					File extFile = new File(properties.getPath() + "/ext/" + submitTopoJar + ".txt");
+					String data = keyword + "|" + jarName + "|" + mainClass + " " + mainArgs;
+					StringFileUtil.writeTo(data, extFile);
+				}
+			}
 		}
 
 		return new ModelAndView("redirect:/toTasks?name=" + name);
@@ -181,6 +211,7 @@ public class JarListController {
 		String jarPath = properties.getPath();
 		String argsPath = properties.getPath() + "/args";
 		String keysPath = properties.getPath() + "/keys";
+		String extPath = properties.getPath() + "/ext";
 		
 		// get the jar's keys
 		Map<String, String> jarKeysMap = new HashMap<String, String>();
@@ -233,6 +264,33 @@ public class JarListController {
 					if(keys != null) {
 						fileObject.setKeys(keys);
 					}
+					jarFileArray.add(fileObject);
+				}
+			}
+		}
+		
+		// get ext jar list
+		File extFolder = new File(extPath);
+		File[] extlistFiles = extFolder.listFiles();
+		if(extFolder.exists() && extlistFiles != null && extlistFiles.length > 0) {
+			for(File txtFile : extlistFiles) {
+				String textFileName = txtFile.getName();
+				if(txtFile.isFile() && textFileName.endsWith(".jar.txt")) {
+					textFileName = textFileName.substring(0, textFileName.length() - 4);
+					String data = StringFileUtil.readFrom(txtFile);
+					if(data == null || data.length() <= 0) {
+						break;
+					}
+					String[] params = data.split("\\|"); 
+					if(params == null || params.length != 3) {
+						break;
+					}
+					
+					UIJarFile fileObject = new UIJarFile();
+					fileObject.setJarName(textFileName);
+					fileObject.setFullPath(params[1]);
+					fileObject.setKeys(params[0]);
+					fileObject.setArgs(params[2]);
 					jarFileArray.add(fileObject);
 				}
 			}

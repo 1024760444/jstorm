@@ -48,7 +48,7 @@
                 <td>${jarInfo.jarName}</td>
                 <td>${jarInfo.fullPath}</td>
                 <td>${jarInfo.args}</td>
-                <td><button id="submit_topo" class="btn btn-primary btn-xs" >Submit</button></td>
+                <td><button id="submit_topo" class="btn btn-primary btn-xs submit_topology" >Submit</button></td>
             </tr>
         </c:forEach>
         </tbody>
@@ -123,7 +123,7 @@
 						</div>
 						<div class="form-group">
 							<label for="inputfile">Input Jar File</label> <input type="file"
-								id="inputfile"  name="inputfile">
+								id="inputfile" class="form-control" name="inputfile">
 							<p class="help-block">Jstrom Jar File Local Path</p>
 						</div>
 						<button type="submit" class="btn btn-default"> Add </button>
@@ -142,7 +142,7 @@
 		$('#submitJarFile').modal();
 	});
 	
-	$("#submit_topo").click(function() {
+	$(".submit_topology").click(function() {
 		
 		var tr = $(this).parent().parent();
 		var td0 = tr.children("td:eq(0)");
