@@ -80,6 +80,10 @@
 							<label for="name">Args : </label> <input type="text"
 								class="form-control" id="submitTopoArgs" name="submitTopoArgs" placeholder="Main Args">
 						</div>
+						<div class="form-group">
+							<label for="name">PassWord : </label> <input type="text"
+								class="form-control" id="passWord" name="passWord" placeholder="PassWord">
+						</div>
 						<button type="submit" class="btn btn-default"> Submit </button>
 					</form>
 				</div>
@@ -112,6 +116,10 @@
 						<div class="form-group">
 							<label for="name">Main Args : </label> <input type="text"
 								class="form-control" id="mainArgs" name="mainArgs" placeholder="Main Args">
+						</div>
+						<div class="form-group">
+							<label for="name">Keyword : </label> <input type="text"
+								class="form-control" id="keyword" name="keyword" placeholder="Keyword">
 						</div>
 						<div class="form-group">
 							<label for="inputfile">Input Jar File</label> <input type="file"
